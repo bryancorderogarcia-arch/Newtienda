@@ -44,10 +44,10 @@ public class CategoriaService {
      * @return El objeto Producto si existe, o null.
      */
     @Transactional(readOnly = true)
-    public Categoria getCategoria(Long idCategoria) {
+    public Optional<Categoria> getCategoria(Long idCategoria) {
         // Corrección en la línea 51 (aproximada): Uso directo de findById().orElse(null)
         // El tipo de retorno de findById es Optional<Producto>, que sí tiene el método orElse.
-        return categoriaRepository.findById(idCategoria).orElse(null);
+        return categoriaRepository.findById(idCategoria);
     }
 
    
@@ -76,4 +76,6 @@ public class CategoriaService {
             return false;
         }
     }
+
+    
 }
