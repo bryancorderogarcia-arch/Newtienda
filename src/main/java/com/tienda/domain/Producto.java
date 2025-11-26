@@ -3,52 +3,60 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.tienda.domain;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import lombok.Data;
+
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.io.Serializable;
-import lombok.Data;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+
 
 /**
  * Entidad que representa un producto de la tienda.
  * Utiliza Lombok (@Data) para generar getters, setters, toString, equals y hashCode.
  */
-@Entity
+
 @Data
+@Entity
 @Table(name = "producto")
 public class Producto implements Serializable {
-    
-    // Serial version UID para la serialización de objetos
+
     private static final long serialVersionUID = 1L;
-    
-    // Campo ID y clave primaria (autoincremental)
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idProducto; // id_producto en la base de datos
-    
-    private String nombre;
+    @Column(name = "id_roducto")
+    private Integer idProducto;
+    private Integer idCategoria;
+
+    @Column(nullable = false, length = 50)
+    @NotBlank(message = "La descripción no puede estar vacía.")
+    @Size(max = 50, message = "La descripción no puede tener más de 50 caracteres.")
     private String descripcion;
-    private double precio;
-    private int existencias;
-    private boolean activo; // Para saber si el producto está disponible o no
-    
-    // Campo para guardar la RUTA ESTÁTICA de la imagen
-    // La imagen física se guardará en src/main/resources/static/img/productos
-    private String rutaImagen; 
 
-    // Constructor vacío (necesario para JPA/Hibernate)
-    public Producto() {
-    }
+    @Column(columnDefinition = "TEXT")
+    private String detalle;
 
-    // Constructor para crear un producto sin el ID (que es autoincremental)
-    public Producto(String nombre, String descripcion, double precio, int existencias, boolean activo, String rutaImagen) {
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.precio = precio;
-        this.existencias = existencias;
-        this.activo = activo;
-        this.rutaImagen = rutaImagen;
-    }
+    @Column(precision = 12, scale = 2)
+    @NotNull(message = "El precio no puede estar vacío.")
+    @DecimalMin(value = "0.01", inclusive = true, message = "El precio debe ser mayor a 0.")
+    private BigDecimal precio;
+
+    @NotNull(message = "El campo de existencias no puede estar vacío.")
+    @Min(value = 0, message = "Las existencias deben ser un número mayor o igual a 0.")
+    private Integer existencias;
+
+    @Column(name = "ruta_imagen", length = 1024)
+    private String rutaImagen;
+    private boolean activo;
 }

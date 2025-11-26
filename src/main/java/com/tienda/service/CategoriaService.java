@@ -7,13 +7,19 @@ package com.tienda.service;
 import com.tienda.domain.Categoria;
 import com.tienda.repository.CategoriaRepository;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CategoriaService {
+
+    public static Object getMessage(String mensajeactualizado, Object object, Locale aDefault) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
      @Autowired
     private CategoriaRepository categoriaRepository;
@@ -21,10 +27,10 @@ public class CategoriaService {
     /**
      * Recupera una lista de categorías, filtrando opcionalmente por estado activo.
      * @param activo Si es true, solo devuelve categorías activas. Si es false, devuelve todas.
-     * @return Lista de Categorias.
+     * @return Lista de Productos.
      */
     @Transactional(readOnly=true)
-    public List<Categoria> getCategorias(boolean activo) {
+    public List<Categoria> getCategoria(boolean activo) {
         if (activo) {
             // Se asume que findByActivoTrue está definido en el Repositorio.
             return categoriaRepository.findByActivoTrue();
@@ -34,20 +40,20 @@ public class CategoriaService {
     
     /**
      * Recupera una única categoría por su ID.
-     * @param idCategoria El ID de la categoría a buscar (Long).
-     * @return El objeto Categoria si existe, o null.
+     * @param idProducto El ID de la categoría a buscar (Long).
+     * @return El objeto Producto si existe, o null.
      */
     @Transactional(readOnly = true)
     public Categoria getCategoria(Long idCategoria) {
         // Corrección en la línea 51 (aproximada): Uso directo de findById().orElse(null)
-        // El tipo de retorno de findById es Optional<Categoria>, que sí tiene el método orElse.
+        // El tipo de retorno de findById es Optional<Producto>, que sí tiene el método orElse.
         return categoriaRepository.findById(idCategoria).orElse(null);
     }
 
    
     /**
      * Guarda o actualiza una categoría.
-     * @param categoria El objeto Categoria a guardar.
+     * @param producto El objeto Producto a guardar.
      */
     @Transactional
     public void save(Categoria categoria) {
@@ -56,7 +62,7 @@ public class CategoriaService {
 
     /**
      * Elimina una categoría.
-     * @param categoria El objeto Categoria a eliminar.
+     * @param producto El objeto Producto a eliminar.
      * @return true si la eliminación fue exitosa, false en caso de error.
      */
     @Transactional

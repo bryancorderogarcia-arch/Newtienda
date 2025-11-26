@@ -17,4 +17,5 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     // automáticamente y devuelve Optional<Categoria>. 
     // La línea que tenías: public Object findById(Long idCategoria);
     // DEBE SER ELIMINADA para que el servicio funcione correctamente.
+
 }
