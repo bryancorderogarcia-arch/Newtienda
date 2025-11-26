@@ -2,26 +2,39 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"      
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    
+    <!-- ********************************** -->
+    <!-- FRAGMENTO: HEAD (Encabezado HTML) -->
+    <!-- ********************************** -->
     <head th:fragment="head">
         <title>TechShop</title>
         <meta charset="UTF-8"/>
+        <!-- Recursos de Bootstrap y Font Awesome (Webjars) -->
         <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
         <link th:href="@{/webjars/font-awesome/css/all.css}" rel="stylesheet"/>
-        <script th:src="@{/js/rutinas.js"></script>
+        <!-- Scripts propios y de Webjars (JQuery, Popper, Bootstrap JS) -->
+        <script th:src="@{/js/rutinas.js}"></script>
         <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
         <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
-        <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>        
+        <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>      
     </head>
+    
     <body>
+        
+        <!-- ********************************** -->
+        <!-- FRAGMENTO: HEADER (Cabecera) -->
+        <!-- ********************************** -->
         <header th:fragment="header" class="header">
             <nav class="navbar navbar-expand-sm p-0">
-                <div class="container">                    
+                <div class="container">
                     <a th:href="@{/}" class="navbar-brand">[[#{aplicacion.titulo}]]</a>
                     <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                        <ul class="navbar-nav">
+                        
+                        <!-- Menú de navegación principal (Categorías, Productos, Extras) -->
+                        <ul class="navbar-nav" sec:authorize="hasRole('ROLE_ADMIN')"> <!-- APLICACIÓN DE ROL: ROLE_ADMIN -->
                             <li class="nav-item px-2"><a class="nav-link" th:href="@{/categoria/listado}">[[#{plantilla.categorias}]]</a></li>
                             <li class="nav-item px-2"><a class="nav-link" th:href="@{/producto/listado}">[[#{plantilla.productos}]]</a></li>
                             <li class="nav-item dropdown">
@@ -32,17 +45,19 @@
                                     <li><a class="dropdown-item" th:href="@{/pruebas/listado2}">[[#{plantilla.consultas}]]</a></li>
                                 </ul>
                             </li>
-                            <li class="nav-item dropdown">
+
+                            <!-- INICIO: BLOQUE ADMINISTRADOR RESTRINGIDO POR ROL (Submenú de Administración) -->
+                            <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_ADMIN')">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
                                     [[#{plantilla.admin}]]</a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" th:href="@{/usuario/listado}">[[#{plantilla.usuarios}]]</a></li>                                    
+                                    <li><a class="dropdown-item" th:href="@{/usuario/listado}">[[#{plantilla.usuarios}]]</a></li>                       
                                     <li class="submenu submenu-md dropend">
                                         <a class="dropdown-item dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"
                                            onclick="event.stopPropagation();">
                                             [[#{plantilla.seguridad}]]
                                         </a>
-                                        <ul class="dropdown-menu">                                            
+                                        <ul class="dropdown-menu">                                        
                                             <li><a class="dropdown-item" th:href="@{/role/listado}">[[#{plantilla.troles}]]</a></li>
                                             <li><a class="dropdown-item" th:href="@{/usuario_role/asignar}">[[#{plantilla.permisos}]]</a></li>
                                             <li><a class="dropdown-item" th:href="@{/ruta/listado}">[[#{plantilla.rutas}]]</a></li>
@@ -52,6 +67,10 @@
                                 </ul>
                             </li>
                         </ul>
+                        <!-- FIN DE LOS ELEMENTOS DE NAVEGACIÓN PRINCIPAL -->
+                        
+                        
+                        <!-- Menú de Idiomas -->
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
@@ -64,11 +83,45 @@
                                 </ul>
                             </li>
                         </ul>
+                        
+                        <!-- BLOQUE DE LOGIN/LOGOUT (Alineado a la derecha con 'ms-auto') -->
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            
+                            <!-- Muestra el Nombre del Usuario autenticado -->
+                            <li class="nav-item my-auto" sec:authorize="isAuthenticated()">
+                                <a class="nav-link" href="#">
+                                    <i class="fas fa-user me-1"></i>
+                                    <span sec:authentication="name" class="ms-1 fw-bold text-primary"></span>
+                                </a>
+                            </li>
+
+                            <!-- Formulario de LOGOUT (Cerrar Sesión) -->
+                            <li class="nav-item my-auto" sec:authorize="isAuthenticated()">
+                                <form method="post" th:action="@{/logout}">
+                                    <button class="btn btn-outline-danger btn-sm d-flex align-items-center nav-link" type="submit">
+                                        <i class="fas fa-sign-out-alt me-2"></i>
+                                        [[#{plantilla.logout}]]
+                                    </button>
+                                </form>
+                            </li>
+                            
+                            <!-- Opción de LOGIN -->
+                            <li class="nav-item my-auto" sec:authorize="isAnonymous()">
+                                <a class="nav-link btn btn-success btn-sm text-white" th:href="@{/login}">
+                                    <i class="fas fa-sign-in-alt me-2"></i>
+                                    [[#{plantilla.login}]]
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- FIN: BLOQUE DE LOGIN/LOGOUT -->
+
                         <div id="resultBlock">
                         </div>
                     </div>
                 </div>
             </nav>
+            
+            <!-- Sección Principal de Encabezado (Título de la Tienda) -->
             <section id="main-header" class="py-2 bg-success text-white">
                 <div class="container">
                     <div class="row">
@@ -79,11 +132,16 @@
                 </div>
             </section>
             
-            
-            <section th:fragment="mostrarToast">
-                <div aria-live="polite"> aria-atomic="true"
-                    class="position-fixed top-50 start-50 translate-middle" style="z-index: 1080;">
-                    <div th:if="${error}" 
+        </header>
+
+        <!-- ********************************** -->
+        <!-- FRAGMENTO: MOSTRAR TOAST (Mensajes) -->
+        <!-- ********************************** -->
+        <section th:fragment="mostrarToast">
+            <!-- La estructura de 'div' con los atributos de ARIA estaba rota, la he corregido: -->
+            <div aria-live="polite" aria-atomic="true"
+                 class="position-fixed top-50 start-50 translate-middle" style="z-index: 1080;">
+                <div th:if="${error}" 
                      class="toast show"
                      role="alert"
                      aria-live="assertive"
@@ -110,7 +168,6 @@
                             <button type="button" 
                                     class="btn btn-secondary btn-sm"
                                     data-bs-dismiss="toast">
-                                <!-- Etiqueta del botón obtenida de archivos de propiedades (i18n) -->
                                 [[#{accion.cerrar}]]
                             </button>
                         </div>
@@ -118,34 +175,24 @@
                 </div>
             </div>
         </section>
-                
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-        </header>
-
+        
+        <!-- ********************************** -->
+        <!-- FRAGMENTO: NO LOGIN (Mensaje a no autenticados) -->
+        <!-- ********************************** -->
+        <section th:fragment="nologin">
+            <div class="container py-4">
+                <p>
+                    [[#{plantilla.nologin.linea1}]]
+                </p>
+            </div>
+        </section>
+        
+        <!-- ********************************** -->
+        <!-- FRAGMENTO: FOOTER (Pie de página) -->
+        <!-- ********************************** -->
         <footer th:fragment="footer" class="p-2 mt-5 bg-info text-white">
-            <p class="lead text-center">[[#{plantilla.derechos}]] &COPY;</p>
+            <p class="lead text-center">[[#{plantilla.derechos}]] &copy;</p>
         </footer>
-        
-        
-        
         
     </body>
 </html>
-
-
-
-
-
-
