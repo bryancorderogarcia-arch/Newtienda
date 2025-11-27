@@ -82,11 +82,13 @@ public class ProjectConfig implements WebMvcConfigurer{
            messageSource.setBasenames("messages");
            messageSource.setDefaultEncoding("UTF-8");
            return messageSource;
+           
+        }   
       public static final String[] PUBLIC_URLS = {
         "/", "/index", "/fav/**", "/carrito/**", "/consultas/**", "/registro/**",
         "/js/**", "/webjars/**", "/login", "/acceso_denegado"
     };
-
+      
     public static final String[] ADMIN_URLS = {
         "/producto/nuevo", "/producto/guardar", "/producto/modificar/**", "/producto/eliminar/**",
         "/categoria/nuevo", "/categoria/guardar", "/categoria/modificar/**", "/categoria/eliminar/**",

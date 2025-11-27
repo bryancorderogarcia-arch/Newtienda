@@ -9,5 +9,9 @@ package com.tienda.domain;
  * @author corde
  */
 public class Ruta {
+
+    public boolean isRequiereRol() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
 }

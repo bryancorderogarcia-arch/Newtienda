@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"      
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     
     <!-- ********************************** -->
@@ -9,14 +9,19 @@
     <head th:fragment="head">
         <title>TechShop</title>
         <meta charset="UTF-8"/>
+        <!-- Aseguramos la compatibilidad con dispositivos móviles -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        
         <!-- Recursos de Bootstrap y Font Awesome (Webjars) -->
         <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
         <link th:href="@{/webjars/font-awesome/css/all.css}" rel="stylesheet"/>
+        
         <!-- Scripts propios y de Webjars (JQuery, Popper, Bootstrap JS) -->
         <script th:src="@{/js/rutinas.js}"></script>
         <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
-        <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
-        <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>      
+        <!-- Popper es necesario para los dropdowns y tooltips de Bootstrap -->
+        <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script> 
+        <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>      
     </head>
     
     <body>
@@ -34,9 +39,12 @@
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         
                         <!-- Menú de navegación principal (Categorías, Productos, Extras) -->
-                        <ul class="navbar-nav" sec:authorize="hasRole('ROLE_ADMIN')"> <!-- APLICACIÓN DE ROL: ROLE_ADMIN -->
+                        <!-- El atributo sec:authorize="hasRole('ROLE_ADMIN')" se aplica a todo el <ul> -->
+                        <ul class="navbar-nav" sec:authorize="hasRole('ROLE_ADMIN')">
                             <li class="nav-item px-2"><a class="nav-link" th:href="@{/categoria/listado}">[[#{plantilla.categorias}]]</a></li>
                             <li class="nav-item px-2"><a class="nav-link" th:href="@{/producto/listado}">[[#{plantilla.productos}]]</a></li>
+                            
+                            <!-- Dropdown de Extras -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" 
                                    aria-expanded="false">[[#{plantilla.extras}]]</a>
@@ -46,18 +54,23 @@
                                 </ul>
                             </li>
 
-                            <!-- INICIO: BLOQUE ADMINISTRADOR RESTRINGIDO POR ROL (Submenú de Administración) -->
+                            <!-- INICIO: BLOQUE ADMINISTRADOR (Submenú de Administración, anidado si es necesario) -->
+                            <!-- Dado que ya está dentro del bloque ROLE_ADMIN, el sec:authorize interno es redundante, 
+                                 pero se mantiene si se quisiera cambiar el alcance del UL padre. -->
                             <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_ADMIN')">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
-                                    [[#{plantilla.admin}]]</a>
+                                     [[#{plantilla.admin}]]</a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" th:href="@{/usuario/listado}">[[#{plantilla.usuarios}]]</a></li>                       
-                                    <li class="submenu submenu-md dropend">
+                                    <li><a class="dropdown-item" th:href="@{/usuario/listado}">[[#{plantilla.usuarios}]]</a></li>                       
+                                    
+                                    <!-- Submenú anidado: se usa 'dropend' para submenús que se abren a la derecha. 
+                                         NOTA: Esto requiere CSS adicional para funcionar correctamente en Bootstrap 5. -->
+                                    <li class="dropdown-submenu dropend">
                                         <a class="dropdown-item dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                                           onclick="event.stopPropagation();">
-                                            [[#{plantilla.seguridad}]]
+                                            href="#">
+                                             [[#{plantilla.seguridad}]]
                                         </a>
-                                        <ul class="dropdown-menu">                                        
+                                        <ul class="dropdown-menu">                                        
                                             <li><a class="dropdown-item" th:href="@{/role/listado}">[[#{plantilla.troles}]]</a></li>
                                             <li><a class="dropdown-item" th:href="@{/usuario_role/asignar}">[[#{plantilla.permisos}]]</a></li>
                                             <li><a class="dropdown-item" th:href="@{/ruta/listado}">[[#{plantilla.rutas}]]</a></li>
@@ -74,7 +87,7 @@
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
-                                    [[#{plantilla.idioma}]]</a>
+                                     [[#{plantilla.idioma}]]</a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" th:href="@{/(lang=es)}">Español</a></li>
                                     <li><a class="dropdown-item" th:href="@{/(lang=en)}">English</a></li>
@@ -85,13 +98,15 @@
                         </ul>
                         
                         <!-- BLOQUE DE LOGIN/LOGOUT (Alineado a la derecha con 'ms-auto') -->
+                        <!-- Se aplica la clase ms-auto aquí para empujar el bloque de usuario/login a la derecha. -->
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                             
                             <!-- Muestra el Nombre del Usuario autenticado -->
                             <li class="nav-item my-auto" sec:authorize="isAuthenticated()">
                                 <a class="nav-link" href="#">
                                     <i class="fas fa-user me-1"></i>
-                                    <span sec:authentication="name" class="ms-1 fw-bold text-primary"></span>
+                                    <!-- Se usa th:text para una mejor práctica de Thymeleaf en este caso -->
+                                    <span th:text="${#authentication.name}" class="ms-1 fw-bold text-primary"></span>
                                 </a>
                             </li>
 
@@ -109,7 +124,7 @@
                             <li class="nav-item my-auto" sec:authorize="isAnonymous()">
                                 <a class="nav-link btn btn-success btn-sm text-white" th:href="@{/login}">
                                     <i class="fas fa-sign-in-alt me-2"></i>
-                                    [[#{plantilla.login}]]
+                                     [[#{plantilla.login}]]
                                 </a>
                             </li>
                         </ul>
@@ -138,7 +153,7 @@
         <!-- FRAGMENTO: MOSTRAR TOAST (Mensajes) -->
         <!-- ********************************** -->
         <section th:fragment="mostrarToast">
-            <!-- La estructura de 'div' con los atributos de ARIA estaba rota, la he corregido: -->
+            <!-- Posicionamiento fijo centrado para el Toast -->
             <div aria-live="polite" aria-atomic="true"
                  class="position-fixed top-50 start-50 translate-middle" style="z-index: 1080;">
                 <div th:if="${error}" 
@@ -153,15 +168,14 @@
                     <div class="toast-header text-white bg-danger">
                         <!-- Ícono de Font Awesome -->
                         <i class="fa-solid fa-bomb me-2"></i> 
-                        <!-- El mensaje de error principal se usa como título -->
-                        <strong class="me-auto" th:text="${error}">[[${error}]]</strong>
+                        <!-- Uso de th:text en lugar de [[...]] para mayor consistencia y seguridad -->
+                        <strong class="me-auto" th:text="${error}">Error</strong>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
                     
                     <!-- Cuerpo del Toast (Contenido del mensaje) -->
                     <div class="toast-body">
-                        <!-- El mensaje de error se repite en el cuerpo. Se puede usar para un mensaje más detallado. -->
-                        <p th:text="${error}">[[${error}]]</p>
+                        <p th:text="${error}"></p>
                         
                         <!-- Contenedor del Botón de Cierre -->
                         <div class="mt-2 pt-2 border-top text-center">
